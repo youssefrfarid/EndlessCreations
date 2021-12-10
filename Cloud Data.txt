@@ -1,0 +1,35 @@
+Host:192.241.153.160
+Port:3306
+DB: endlessc_endless
+U: endlessc_ramy
+P: J0j0T0ny
+
+
+import mysql.connector
+# Establishing a connection
+connection = mysql.connector.connect(user='endlessc_ramy', password='J0j0T0ny', host='192.241.153.160', database='endlessc_endless')
+if connection.is_connected():
+  print('Successfully connected to DB!')
+cursor = connection.cursor()
+
+# Fetching data
+cursor.execute('SELECT ClientPhone FROM endlessc_endless.clients;')
+result = cursor.fetchall()
+totalNumbers = len(result)
+
+# Severe Connection
+connection.close()
+
+# Place them in an array
+phoneNumbers = []
+for data in result:
+  phoneNumbers.append(data[0])
+
+
+
+# totalNumbers = len(softexMobiles)
+#pprint(brokenNumbers, compact=True, width=70)
+#print('Number of broken numbers: ', len(brokenNumbers))
+#print('Faliure percentage: ', (len(brokenNumbers)/totalNumbers) * 100, '%')
+#print('Number of fixed numbers: ', len(finalNumbers))
+#print('Success percentage: ', (len(finalNumbers)/totalNumbers) * 100, '%')

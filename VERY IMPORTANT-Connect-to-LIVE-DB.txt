@@ -1,0 +1,74 @@
+SOFTEX:
+
+- No Connection to LIVE DB.
+- We get a cloud backup from Softext every now and then
+- We have to restore this cloud backup locally to MS SQL Server as follows:
+  1- Unpack the content of the bacpac file into a folder
+  2- Remove the following content from "model.xml"
+  (ref: https://janaka-nav.blogspot.com/2019/02/error-sql72014-error-sql72045-grant.html)
+
+      <Element Type="SqlPermissionStatement" Name="[Grant.ViewAnyColumnEncryptionKeyDefinition.Database].[public].[dbo]">
+        <Property Name="Permission" Value="1108" />
+        <Relationship Name="Grantee">
+          <Entry>
+            <References ExternalSource="BuiltIns" Name="[public]" />
+          </Entry>
+        </Relationship>
+        <Relationship Name="SecuredObject">
+          <Entry>
+            <References Disambiguator="1" />
+          </Entry>
+        </Relationship>
+      </Element>
+      <Element Type="SqlPermissionStatement" Name="[Grant.ViewAnyColumnMasterKeyDefinition.Database].[public].[dbo]">
+        <Property Name="Permission" Value="1107" />
+        <Relationship Name="Grantee">
+          <Entry>
+            <References ExternalSource="BuiltIns" Name="[public]" />
+          </Entry>
+        </Relationship>
+        <Relationship Name="SecuredObject">
+          <Entry>
+            <References Disambiguator="1" />
+          </Entry>
+        </Relationship>
+      </Element>
+
+  3- Save Model.xml after deleting the above
+
+  4- run the powershell script "computeHash.ps1" ... it will ask you for the full path of the model.xml file .. ex: D:\directory\model.xml
+
+  5- copy the hash code generated
+
+  6- replace the checksum inside the file "Origin.xml" in:
+
+      <Checksums>
+        <Checksum Uri="/model.xml">DC273608C47F4D5D867002FA522C3E9E34BC38ED930BE3FB39F7FBA5DFAB287B</Checksum>
+      </Checksums>
+
+  7- repack the content of the folder in a zip file
+
+  8- in SQL Mgmt Studio, right click "Databases" and choose "Import Data-tier Application" ... follow the steps and choose the zip file as source for importing
+
+  9- in case you face the error:
+      "The sp_configure value 'contained database authentication' must be set to 1"
+      follow the recommendation in this link:
+        https://kloudspro.com/most-common-issue-in-restoring-azure-sql-database-bacpac-file-to-local-database-instance/
+
+  
+VTIGER LIVE MYSQL DB
+
+  1- Create an SSH Tunnel using PuTTY tool:
+      a- hostname: 134.122.89.44
+      b- port: 22
+      c- connection->data->autologin username: root
+      d- connection->ssh->tunnels->Add New Port Forwarding->Source port: 3356(choose whatever)
+      e- connection->ssh->tunnels->Add New Port Forwarding->Destination: localhost:3306 -> click Add
+  2- Open the PuTTY connection
+  3- Password for root: u376e9pqtwq5
+  4- Now you are connected and you can establish an EXCEL Data Source with the following data:
+      a- DB Engine: MYSQL
+      b- host: localhost:3356(or whatever you chose above)
+      c- DB Schema: vtigercrm720
+      d- Username: vtiger
+      e- Password: EndC_stv@E

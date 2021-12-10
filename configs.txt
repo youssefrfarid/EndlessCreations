@@ -1,0 +1,9 @@
+VTIGER
+ssh_host = '134.122.89.44'
+ssh_username = 'root'
+ssh_password = 'u376e9pqtwq5'
+database_username = 'vtiger'
+database_password = 'EndC_stv@E'
+database_name = 'vtigercrm720'
+localhost = '127.0.0.1'
+
