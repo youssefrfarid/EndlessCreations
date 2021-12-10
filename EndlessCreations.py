@@ -29,7 +29,209 @@ wolfapp_database_name = 'endlessc_endless'
 wolfapp_database_password = 'J0j0T0ny'
 wolfapp_database_username = 'endlessc_ramy'
 localhost = '127.0.0.1'
-    
+
+ArabicToEng = {
+  '٠': '0',
+  '١': '1',
+  '٢': '2',
+  '٣': '3',
+  '٤': '4',
+  '٥': '5',
+  '٦': '6',
+  '٧': '7',
+  '٨': '8',
+  '٩': '9',
+}
+
+SoftexCity = {
+  '0': '',
+  '1': 'القاهرة',
+  '2': 'بورسعيد',
+  '3': 'الاسكندرية',
+  '4': 'الاقصر',
+  '5': 'الغردقه',
+  '6': 'المنزلة',
+  '7': 'طنطا',
+  '8': 'دمياط',
+  '11': 'شبين الكوم',
+  '12': 'اسيوط',
+  '13': 'العين السخنة',
+  '14': 'الاسماعيليه',
+  '15': 'السويس',
+  '16': 'اسوان',
+  '17': 'الشرقية',
+  '18': 'البحيرة',
+  '19': 'المنيا',
+  '20': 'المنصورة',
+  '21': 'مرسى مطروح',
+  '23': 'القليوبية'
+}
+
+SoftexArea = {
+  '0': '',
+  '4': 'المنطقة السابعة',
+  '36': 'المنطقة الاولى',
+  '40': 'المنطقة الثانية',
+  '41': 'الحرفيين',
+  '42': 'السلام',
+  '44': 'العبور',
+  '45': 'شارع دمشق',
+  '46': 'سفير',
+  '47': 'الماظة',
+  '48': 'النزهة الجديدة',
+  '49': 'شيراتون',
+  '50': 'المنطقة الثالثة',
+  '51': 'العجوزة',
+  '52': 'الدقي',
+  '53': 'المهندسين',
+  '54': 'امبابة',
+  '55': 'بولاق',
+  '56': 'أرض اللواء',
+  '57': 'المنطقة الرابعة',
+  '58': 'الرحاب',
+  '59': 'التجمع الخامس',
+  '60': 'مدينة نصر',
+  '61': 'المنطقة الخامسة',
+  '62': 'شبرا',
+  '63': 'شارع الجمهورية',
+  '64': 'شارع بورسعيد',
+  '65': 'شارع أحمد سعيد',
+  '66': 'التوفيقية',
+  '67': 'المنطقة السادسة',
+  '68': 'عين شمس',
+  '69': 'ترعة اسماعيلية',
+  '70': 'الزيتون',
+  '71': 'المطرية', 
+  '72': 'الزمالك',
+  '73': '6 اكتوبر',
+  '75': 'شارع الهرم',
+  '76': 'شارع فيصل',
+  '77': 'المريوطية',
+  '78': 'المنصورية',
+  '79': 'النعام',
+  '80': 'المنطقة الثامنة',
+  '81': 'المعادي', 
+  '82': 'العباسية',
+  '83': 'الدراسة',
+  '84': 'الاوتوستراد',
+  '85': 'ابو رواش',
+  '86': 'الهرم',
+  '87': 'القطامية',
+  '88': 'الجيزة',
+  '89': 'مصر الجديدة',
+  '90': 'حلوان',
+  '91': 'العاشر من رمضان', 
+  '92': 'نادى السكة',
+  '93': 'الحى العاشر',
+  '94': 'حدائق الاهرام',
+  '95': 'السيدة زينب',
+  '97': 'الزاوية الحمراء',
+  '98': 'جسر السويس',
+  '99': 'بنها',
+}
+
+SoftexCtype = {
+  '0': '',
+  '6': '',
+  '4': 'Delivery',
+  '7': 'Corporate General',
+  '10': 'Quick Oil Center',
+  '11': 'Motorcycle',
+  '12': 'Corporate Speed Limiter',
+  '16': 'Retail',
+  '17': 'Distributor',
+  '18': 'PCMO-Service Center',
+  '19': 'Diesel-Service Center',
+  '20': 'Diesel Service Center (Not Active)',
+  '21': 'Distributor (Not Active)',
+  '22': 'Motorcycle (Not Active)',
+  '23': 'PCMO -Service Center (Not Active)',
+  '24': 'Retail (Not Active)',
+  '26': 'Corporate General ( Not Active )',
+  '27': 'Corporate GPS',
+  '28': 'Corporate GPS ( Not Active )',
+  '29': 'Corporate Wolf',
+  '30': 'Corporate Wolf ( Not Active )',
+  '31': 'Corporate Speed Limiter (Not Active )',
+  '32': 'Corporate Filters',
+  '33': 'Corporate Filters (Not Active )',
+  '34': 'Retail Filters',
+  '35': 'Retail Filters ( Not Active )',
+  '36': 'Change Delivery',
+  '37': 'Corporate G.B',
+  '38': 'Corporate G.B ( Not Active )',
+  '39': 'Corporate OSA',
+  '41': 'Corporate OSA (Not Active)',
+  '42': 'Distributor Filters',
+  '44': 'Distributor Filters (Not Active)',
+  '45': 'CIAK',
+  '48': 'Suppported by Sara',
+  '50': 'Supported by Yasmin',
+  '51': 'Bosch',
+  '52': 'Coolection by Bahaa',
+  '53': 'Coolection by Saber',
+  '54': 'Coolection by Nabil',
+  '1053': 'Collection by Merna',
+  '1054': 'Lagence'
+}
+
+SoftexBranch = {
+  '-1': '',
+  '0': '',
+  '2': 'Head Office',
+  '3': 'Ef7as, Nasr City',
+  '6': 'Installations',
+  '7': 'Collections#1',
+  '8': 'Collections#2',
+  '9': 'El mohandseen',
+}
+
+SoftexSalesman = {
+  '0': '',
+  '2': 'Samer Ayoub',
+  '3': 'Hany Alfy',
+  '4': 'Mohamed Said',
+  '5': 'Nader Neamatalla',
+  '6': 'Office General',
+  '7': 'QOC General',
+  '8': 'Technical Team',
+  '9': 'Youssef Emile',
+  '10': 'George Barsom',
+  '11': 'Mohamed Dosuky',
+  '12': 'Nady Naim',
+  '13': 'Ahmed El Gohry',
+  '16': 'Salma Tarek',
+  '17': 'Customer Service',
+  '23': 'Nabil Lamie',
+  '24': 'Stavro Seif',
+  '25': 'Marina Adel',
+  '28': 'Adham Ziad',
+  '30': 'QOC Corporate',
+  '31': 'Office Corporate',
+  '33': 'Tony Ramzy',
+  '34': 'Nader Nabil',
+  '35': 'Nail Nabil',
+  '36': 'Shareef',
+  '37': 'Mohamed Samir',
+  '38': 'Maged Samir',
+  '39': 'David John',
+  '40': 'Marco Nabil',
+  '42': 'Lagence',
+  '43': 'ElKtalog',
+}
+
+template = {
+  '10': '',
+  '11': '',
+  '12': '',
+  '13': '',
+  '14': '',
+  '15': '',
+  '16': '',
+  '17': '',
+  '18': '',
+  '19': '',
+}
 # Create a SSH Tunnel
 def open_ssh_tunnel(verbose=False):
     """Open an SSH tunnel and connect using a username and password.
@@ -102,7 +304,7 @@ def softex():
   cursor.execute('SELECT mobile, serial FROM dbo.clients')
   softexMobile = cursor.fetchall()
   
-  cursor.execute('SELECT serial, name, phone, mobile FROM dbo.clients')
+  cursor.execute('SELECT serial, name, phone, mobile, climit, city, area, ctype, branch, salesman, taxesno, commercialno, email, freedays, scode, status, paymenttype, allowcoin, person FROM dbo.clients')
   softexData = cursor.fetchall()
    
   return softexPhone, softexMobile, softexData
@@ -139,9 +341,10 @@ def wolfapp():
   return dfWolfClients.values, dfWolfData.values
 
 # Exporting Patterns
-namePattern = '[^a-zA-Zء-ي]'
+namePattern = '[^a-zA-Zء-ي\s]'
 # Clean Numbers
 onlyNumbersPattern = '[^+\d]'
+arabicPattern = '[٠-٩]'
 # Egy Numbers
 correctPattern = '^[0][1][0-9]{9}'
 egyCodePattern = '^[+][2][0][1][0-9]{9}'
@@ -178,6 +381,16 @@ def formatNumbers(phoneNumbers):
   for number in phoneNumbers:
     num = number[0]
     id = number[1]
+    
+    # Check if number is Arabic and translate it
+    result = re.match(arabicPattern, num)
+    if result != None:
+      # Translate Number
+      translated = ''
+      for n in num:
+        translated += ArabicToEng[n]
+      num = translated
+
     # Checks the length of the number (NEW)
     if (len(num) == 13 and num[0] == '+') or len(num) == 11:
       # Check if the number is correct
@@ -604,27 +817,103 @@ def getAllContacts(
   orderedAllContacts = orderContacts(allContacts)
   # Add Softex Names
   for contact in orderedAllContacts:
-    # ADD Softex name
+    # ADD Universal Name field
     contact.append('')
+    # Add Softex other Names
     contact.append('|')
+    # Get Serials and split to use each serial when adding data
     serials = contact[3]
     cleanSerials = serials.split('|')
     cleanSerials.remove('')
     cleanSerials.remove('')
+    # Add Softex Old Mobiles
     contact.append('|')
+    # Add Softex climit
+    contact.append('|')
+    # Add Softex City
+    contact.append('')
+    # Add Softex Area
+    contact.append('|')
+    # Add Softex ctype
+    contact.append('|')
+    # Add Softex Branch
+    contact.append('|')
+    # Add Softex Salesman
+    contact.append('|')
+    # Add Softex taxesno
+    contact.append('|')
+    # Add Softex commercialno
+    contact.append('|')
+    # Add Softex email
+    contact.append('|')
+    # Add Softex freedays
+    contact.append('|')
+    # Add Softex scode
+    contact.append('|')
+    # Add Softex status
+    contact.append('|')
+    # Add Softex paymenttype
+    contact.append('|')
+    # Add Softex allowcoin
+    contact.append('|')
+    # Add Softex person
+    contact.append('|')
+    
     for serial in cleanSerials:
       for data in softexData:
         if int(serial) == int(data[0]):
+          # Name
+          data[1] = re.sub(namePattern, '', data[1])
           if contact[7] == '':
             contact[7] += f'{data[1]}'
           else:
             if shouldAdd(data[1], contact[8]):
               contact[8] += f'{data[1]}|'
-
+          # Mobiles
           if data[2] != '':
             contact[9] += f'{data[2]}|'
           if data[3] != '':
-            contact[9] += f'{data[3]}'
+            contact[9] += f'{data[3]}|'
+          # Climit
+          contact[10] += f'{data[4]}|'
+          # City
+          SoftexCityName = SoftexCity[str(data[5])]
+          if contact[11] == '':
+            contact[11] += SoftexCityName
+          else:
+            if SoftexCityName not in contact[11]:
+              contact[11] += f'|{SoftexCityName}'
+          # Area
+          SoftexAreaName = SoftexArea[str(data[6])] 
+          contact[12] += f'{SoftexAreaName}|'
+          # ctype
+          SoftexCtypeName = SoftexCtype[str(data[7])]
+          contact[13] += f'{SoftexCtypeName}|'
+          # Branch
+          SoftexBranchName = SoftexBranch[str(data[8])]
+          contact[14] += f'{SoftexBranchName}|'
+          # Salesman
+          SoftexSalesmanName = SoftexSalesman[str(data[9])]
+          contact[15] += f'{SoftexSalesmanName}|'
+          # Taxesno
+          contact[16] += f'{data[10]}|'
+          # Commercialno
+          contact[17] += f'{data[11]}|'
+          # Email
+          contact[18] += f'{data[12]}|'
+          # Freedays
+          contact[19] += f'{data[13]}|'
+          # Scode
+          contact[20] += f'{data[14]}|'
+          # Status
+          contact[21] += f'{data[15]}|'
+          # Paymenttype
+          contact[22] += f'{data[16]}|'
+          # AllowCoin
+          contact[23] += f'{data[17]}|'
+          # Person
+          data[18] = re.sub(namePattern, '', data[18])
+          contact[24] += f'{data[18]}|'
 
     # ADD VTAccount accountname
     contact.append('|')
@@ -636,13 +925,14 @@ def getAllContacts(
     for accountid in cleanAccountids:
       for data in vtigerAccountsData:
         if int(accountid) == int(data[0]):
-          if shouldAdd(data[1], contact[10]):
-            contact[10] += f'{data[1]}|'
+          data[1] = re.sub(namePattern, '', data[1])
+          if shouldAdd(data[1], contact[25]):
+            contact[25] += f'{data[1]}|'
           
           if data[2] != '':
-            contact[11] += f'{data[2]}|'
+            contact[26] += f'{data[2]}|'
           if data[3] != '':
-            contact[11] += f'{data[3]}|'
+            contact[26] += f'{data[3]}|'
 
     # ADD VTContact firstname + lastname
     contact.append('|')
@@ -654,16 +944,19 @@ def getAllContacts(
     for contactid in cleanContactids:
       for data in vtigerContactsData:
         if int(contactid) == int(data[0]):
+          data[1] = re.sub(namePattern, '', data[1])
+          data[2] = re.sub(namePattern, '', data[2])
+          
           if contact[7] == '':
             contact[7] += f'{data[1]} {data[2]}'
           else:
-            if shouldAdd(f'{data[1]} {data[2]}', contact[12]):
-              contact[12] += f'{data[1]} {data[2]}|'
+            if shouldAdd(f'{data[1]} {data[2]}', contact[27]):
+              contact[27] += f'{data[1]} {data[2]}|'
               
           if data[3] != '':
-            contact[13] += f'{data[3]}|'
+            contact[28] += f'{data[3]}|'
           if data[4] != '':
-            contact[13] += f'{data[4]}|'
+            contact[28] += f'{data[4]}|'
             
     # ADD WolfApp ClientName
     contact.append('|')
@@ -675,16 +968,20 @@ def getAllContacts(
     for wolfid in cleanWolfids:
       for data in wolfData:
         if int(wolfid) == int(data[0]):
-          if shouldAdd(f'{data[1]}', contact[14]):
-            contact[14] += f'{data[1]}|'
+          data[1] = re.sub(namePattern, '', data[1])
+          if contact[7] == '':
+            contact[7] += f'{data[1]}'
+          else:
+            if shouldAdd(f'{data[1]}', contact[29]):
+              contact[29] += f'{data[1]}|'
             
           if data[2] != '':
-            contact[15] += f'{data[2]}|'
+            contact[30] += f'{data[2]}|'
 
     # ADD Is Company w Change Company ID to Related Company
     contact.append('')
     if contact[2] == '':
-      contact[16] = '1'
+      contact[31] = '1'
       contact.append('')
     else:
       contact[16] = '0'
@@ -727,6 +1024,21 @@ def exportExcel(allContacts):
       'Name',
       'Softex otherNames',
       'Softex Old Mobiles',
+      'Softex climit',
+      'Softex City',
+      'Softex Area',
+      'Softex ctype',
+      'Softex branch',
+      'Softex salesman',
+      'Softex taxesno',
+      'Softex commercialno',
+      'Softex email',
+      'Softex freedays',
+      'Softex scode',
+      'Softex status',
+      'Softex paymenttype',
+      'Softex allowcoin',
+      'Softex person',
       'VTAccount accountname',
       'VTAccount Old Mobiles',
       'VTContacts otherNames',
@@ -756,9 +1068,24 @@ def exportExcel(allContacts):
     'VTAccount accountname',
     'VTContacts otherNames',
     'WolfApp ClientName',
+    'Softex climit',
+    'Softex City',
+    'Softex Area',
+    'Softex ctype',
+    'Softex branch',
+    'Softex salesman',
+    'Softex taxesno',
+    'Softex commercialno',
+    'Softex email',
+    'Softex freedays',
+    'Softex scode',
+    'Softex status',
+    'Softex paymenttype',
+    'Softex allowcoin',
+    'Softex person',
   ]
   allContactsDf = allContactsDf.reindex(columns=column_names)
-  file_name = 'AllContactsV5.0.xlsx'
+  file_name = 'AllContactsV5.6.xlsx'
   allContactsDf.to_excel(file_name)
   
 # Getting Softex Data
