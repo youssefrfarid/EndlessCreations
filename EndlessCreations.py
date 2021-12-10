@@ -102,7 +102,7 @@ def softex():
   cursor.execute('SELECT mobile, serial FROM dbo.clients')
   softexMobile = cursor.fetchall()
   
-  cursor.execute('SELECT serial, name FROM dbo.clients')
+  cursor.execute('SELECT serial, name, phone, mobile FROM dbo.clients')
   softexData = cursor.fetchall()
    
   return softexPhone, softexMobile, softexData
@@ -114,10 +114,10 @@ def vtiger():
   
   dfContactDetailsMobile = run_query("SELECT mobile, contactid FROM vtiger_contactdetails")
   dfContactDetailsPhone = run_query("SELECT phone, contactid FROM vtiger_contactdetails")
-  dfContactsData = run_query("SELECT contactid, firstname, lastname FROM vtiger_contactdetails")
+  dfContactsData = run_query("SELECT contactid, firstname, lastname, mobile, phone FROM vtiger_contactdetails")
   dfAccountsPhone = run_query('SELECT phone, accountid FROM vtiger_account')
   dfAccountsOtherPhone = run_query('SELECT otherphone, accountid FROM vtiger_account')
-  dfAccountsData = run_query('SELECT accountid, accountname FROM vtiger_account')
+  dfAccountsData = run_query('SELECT accountid, accountname, phone, otherphone FROM vtiger_account')
   
   mysql_disconnect()
   close_ssh_tunnel()
@@ -134,7 +134,7 @@ def wolfapp():
         port=wolfapp_port
   )
   dfWolfClients = pd.read_sql_query('SELECT ClientPhone, IDClient FROM endlessc_endless.clients;', connection)
-  dfWolfData = pd.read_sql_query('SELECT IDClient, ClientName FROM endlessc_endless.clients;', connection)
+  dfWolfData = pd.read_sql_query('SELECT IDClient, ClientName, ClientPhone FROM endlessc_endless.clients;', connection)
   
   return dfWolfClients.values, dfWolfData.values
 
@@ -605,18 +605,29 @@ def getAllContacts(
   # Add Softex Names
   for contact in orderedAllContacts:
     # ADD Softex name
+    contact.append('')
     contact.append('|')
     serials = contact[3]
     cleanSerials = serials.split('|')
     cleanSerials.remove('')
     cleanSerials.remove('')
+    contact.append('|')
     for serial in cleanSerials:
       for data in softexData:
         if int(serial) == int(data[0]):
-          if shouldAdd(data[1], contact[7]):
-            contact[7] += f'{data[1]}|'
-    
+          if contact[7] == '':
+            contact[7] += f'{data[1]}'
+          else:
+            if shouldAdd(data[1], contact[8]):
+              contact[8] += f'{data[1]}|'
+
+          if data[2] != '':
+            contact[9] += f'{data[2]}|'
+          if data[3] != '':
+            contact[9] += f'{data[3]}'
+
     # ADD VTAccount accountname
+    contact.append('|')
     contact.append('|')
     accountids = contact[4]
     cleanAccountids = accountids.split('|')
@@ -625,10 +636,16 @@ def getAllContacts(
     for accountid in cleanAccountids:
       for data in vtigerAccountsData:
         if int(accountid) == int(data[0]):
-          if shouldAdd(data[1], contact[8]):
-            contact[8] += f'{data[1]}|'
+          if shouldAdd(data[1], contact[10]):
+            contact[10] += f'{data[1]}|'
+          
+          if data[2] != '':
+            contact[11] += f'{data[2]}|'
+          if data[3] != '':
+            contact[11] += f'{data[3]}|'
 
     # ADD VTContact firstname + lastname
+    contact.append('|')
     contact.append('|')
     contactids = contact[5]
     cleanContactids = contactids.split('|')
@@ -637,10 +654,19 @@ def getAllContacts(
     for contactid in cleanContactids:
       for data in vtigerContactsData:
         if int(contactid) == int(data[0]):
-          if shouldAdd(f'{data[1]} {data[2]}', contact[9]):
-            contact[9] += f'{data[1]} {data[2]}|'
-
+          if contact[7] == '':
+            contact[7] += f'{data[1]} {data[2]}'
+          else:
+            if shouldAdd(f'{data[1]} {data[2]}', contact[12]):
+              contact[12] += f'{data[1]} {data[2]}|'
+              
+          if data[3] != '':
+            contact[13] += f'{data[3]}|'
+          if data[4] != '':
+            contact[13] += f'{data[4]}|'
+            
     # ADD WolfApp ClientName
+    contact.append('|')
     contact.append('|')
     wolfids = contact[6]
     cleanWolfids = wolfids.split('|')
@@ -649,9 +675,26 @@ def getAllContacts(
     for wolfid in cleanWolfids:
       for data in wolfData:
         if int(wolfid) == int(data[0]):
-          if shouldAdd(f'{data[1]}', contact[10]):
-            contact[10] += f'{data[1]}|'
-    
+          if shouldAdd(f'{data[1]}', contact[14]):
+            contact[14] += f'{data[1]}|'
+            
+          if data[2] != '':
+            contact[15] += f'{data[2]}|'
+
+    # ADD Is Company w Change Company ID to Related Company
+    contact.append('')
+    if contact[2] == '':
+      contact[16] = '1'
+      contact.append('')
+    else:
+      contact[16] = '0'
+      relatedCompanyID = contact[2]
+      for c in orderedAllContacts:
+        if c[0] == relatedCompanyID:
+          relatedCompanyName = c[7]
+          break
+      contact.append(relatedCompanyName)
+      
   return orderedAllContacts
 
 def orderContacts(allContacts):
@@ -681,13 +724,41 @@ def exportExcel(allContacts):
       'VTAccount accountid',
       'VTContactDetails contactid',
       'WolfApp IDClient',
-      'Softex name',
+      'Name',
+      'Softex otherNames',
+      'Softex Old Mobiles',
       'VTAccount accountname',
-      'VTContacts firstname + lastname',
-      'WolfApp ClientName'
+      'VTAccount Old Mobiles',
+      'VTContacts otherNames',
+      'VTContacts Old Mobiles',
+      'WolfApp ClientName',
+      'WolfApp Old Mobiles',
+      'Is a company',
+      'Related company'
     ]
   )
-  file_name = 'AllContactsV4.1.xlsx'
+  column_names = [
+    'ID',
+    'Name',
+    'Is a company',
+    'Related company',
+    'Mobiles',
+    'Softex Old Mobiles',
+    'VTAccount Old Mobiles',
+    'VTContacts Old Mobiles',
+    'WolfApp Old Mobiles',
+    'CompanyID',
+    'Softex serial',
+    'VTAccount accountid',
+    'VTContactDetails contactid',
+    'WolfApp IDClient',
+    'Softex otherNames',
+    'VTAccount accountname',
+    'VTContacts otherNames',
+    'WolfApp ClientName',
+  ]
+  allContactsDf = allContactsDf.reindex(columns=column_names)
+  file_name = 'AllContactsV5.0.xlsx'
   allContactsDf.to_excel(file_name)
   
 # Getting Softex Data
