@@ -219,6 +219,42 @@ SoftexSalesman = {
   '42': 'Lagence',
   '43': 'ElKtalog',
 }
+WolfCity = {
+  'nan': '',
+  
+  '1': 'Cairo',
+  '2': 'Giza',
+  '3': 'Alex',
+  '4': 'Suez',
+  '5': 'Ismailia',
+  '6': 'Port Said',
+  '7': 'Qalyobia',
+  '8': 'Minoufiya',
+  '9': 'Sharqia',
+  '10': 'Gharbiya',
+  '11': 'Daqahlya',
+  '12': 'Kafr El-Shiekh',
+  '13': 'Damietta',
+  '14': 'Behaira',
+  '15': 'Fayuom',
+  '16': 'Miniya',
+  '17': 'Assuit',
+  '18': 'Sohag',
+  '19': 'Beni-Suef',
+  '20': 'Qena',
+  '21': 'Aswan',
+  '22': 'Luxor',
+  '23': 'Red Sea',
+  '24': 'South Sinaa',
+  '25': 'North Coast and Matrouh',
+  '26': 'New Valley',
+  '27': 'North Sinai',
+  '28': 'Abu Simbel',
+  '29': 'Marsa Allam',
+  '30': 'Salloum',
+  '31': 'Halayb And Shalatin',
+  '32': 'Oasis and other towns and vllages outside min city limits in zone 4 and 5'
+}
 
 template = {
   '10': '',
@@ -316,8 +352,9 @@ def vtiger():
   
   dfContactDetailsMobile = run_query("SELECT mobile, contactid FROM vtiger_contactdetails")
   dfContactDetailsPhone = run_query("SELECT phone, contactid FROM vtiger_contactdetails")
-  dfContactsData = run_query("SELECT contactid, firstname, lastname, mobile, phone FROM vtiger_contactdetails")
-  
+  dfContactsData = run_query("SELECT contactid, firstname, lastname, mobile, phone, email, contact_no, salutation, vehicle_type, contact_brand, year_of_made, client_point, add_point FROM vtiger_contactdetails")
+  dfContactsExtraData = run_query('SELECT contactid, cf_751, cf_753, cf_757, cf_845, cf_881, cf_883, cf_885, cf_932, cf_936, cf_1567, cf_2079, cf_2081, cf_2083, cf_2085, cf_2087, cf_2089, cf_2109, cf_2113, cf_2530 FROM vtiger_contactscf')
+  # id, Name in Arabic,  Landline, Cllient Type, District, StreetDetails, Country, City, Mobile 2, Mobile 2, Model, Call Feedback, Vehicle Service Tracker, App User Experience, Order, Points Awareness, Other Comments, Client Case, Next Action Date, Converted Lead ID
   
   dfAccountsPhone = run_query('SELECT phone, accountid FROM vtiger_account')
   dfAccountsOtherPhone = run_query('SELECT otherphone, accountid FROM vtiger_account')
@@ -328,7 +365,7 @@ def vtiger():
   mysql_disconnect()
   close_ssh_tunnel()
   
-  return dfContactDetailsMobile.values, dfAccountsPhone.values, dfContactDetailsPhone.values, dfAccountsOtherPhone.values, dfAccountsData.values, dfContactsData.values, dfAccountsExtraData.values
+  return dfContactDetailsMobile.values, dfAccountsPhone.values, dfContactDetailsPhone.values, dfAccountsOtherPhone.values, dfAccountsData.values, dfContactsData.values, dfAccountsExtraData.values, dfContactsExtraData.values
 
 # Connnect to WolfApp
 def wolfapp():
@@ -340,7 +377,7 @@ def wolfapp():
         port=wolfapp_port
   )
   dfWolfClients = pd.read_sql_query('SELECT ClientPhone, IDClient FROM endlessc_endless.clients;', connection)
-  dfWolfData = pd.read_sql_query('SELECT IDClient, ClientName, ClientPhone FROM endlessc_endless.clients;', connection)
+  dfWolfData = pd.read_sql_query('SELECT IDClient, ClientName, ClientPhone, ClientEmail, IDCity, ClientPasswordPlain, ClientStatus, ClientPoints FROM endlessc_endless.clients;', connection)
   
   return dfWolfClients.values, dfWolfData.values
 
@@ -568,7 +605,8 @@ def getAllContacts(
   vtigerAccountsData,
   vtigerContactsData,
   wolfData,
-  vtigerAccountsExtraData
+  vtigerAccountsExtraData,
+  vtigerContactsExtraData
 ):
   
   allContacts = []
@@ -1022,31 +1060,162 @@ def getAllContacts(
     contact.append('|')
     # Add VTContact Old Mobiles
     contact.append('|')
+    # Add Email
+    contact.append('|')
+    # Add ContactNo
+    contact.append('|')
+    # Add Salutation
+    contact.append('|')
+    # Add Vehicle Type
+    contact.append('|')
+    # Add Contact Brand
+    contact.append('|')
+    # Add Year of Made
+    contact.append('|')
+    # Add Client Point
+    contact.append('|')
+    # Add Add Point
+    contact.append('|')
     # Clean VTContact ids to loop through them
     contactids = contact[5]
     cleanContactids = contactids.split('|')
     cleanContactids.remove('')
     cleanContactids.remove('')
+    # Add Name in Arabic
+    contact.append('|')
+    # Add Landline
+    contact.append('|')
+    # Add Client Type
+    contact.append('|')
+    # Add District
+    contact.append('|')
+    # Add Street Details
+    contact.append('|')
+    # Add Country
+    contact.append('')
+    # Add City
+    contact.append('|')
+    # Add Mobile 2
+    contact.append('')
+    # Add Model
+    contact.append('|')
+    # Add Call Feedback
+    contact.append('|')
+    # Add Vehicle Service Tracker
+    contact.append('|')
+    # Add App User Experience
+    contact.append('|')
+    # Add Order
+    contact.append('|')
+    # Add Points Awareness
+    contact.append('|')
+    # Add Other Comments
+    contact.append('|')
+    # Add Client Case
+    contact.append('|')
+    # Add Next Action Date
+    contact.append('|')
+    # Converted Lead ID
+    contact.append('|')
+    
     for contactid in cleanContactids:
       for data in vtigerContactsData:
         if int(contactid) == int(data[0]):
           data[1] = re.sub(namePattern, '', data[1])
           data[2] = re.sub(namePattern, '', data[2])
-          
+          # Name
           if contact[7] == '':
             contact[7] += f'{data[1]} {data[2]}'
           else:
             if shouldAdd(f'{data[1]} {data[2]}', contact[43]):
               contact[43] += f'{data[1]} {data[2]}|'
-              
+          # Old Mobiles
           if data[3] != '':
             contact[44] += f'{data[3]}|'
           if data[4] != '':
             contact[44] += f'{data[4]}|'
-            
+          # Email
+          contact[45] += f'{data[5]}|'
+          # ContactNo
+          contact[46] += f'{data[6]}|'
+          # Salutation
+          contact[47] += f'{data[7]}|'
+          # Vehicle Type
+          contact[48] += f'{data[8]}|'
+          # Contact Brand
+          contact[49] += f'{data[9]}|'
+          # Year Of Made
+          contact[50] += f'{data[10]}|'
+          # Client Point
+          contact[51] += f'{data[11]}|'
+          # Add Point
+          contact[52] += f'{data[12]}|'
+      
+      for data in vtigerContactsExtraData:
+        if int(contactid) == int(data[0]):
+          # Name in Arabic
+          data[1] = re.sub(namePattern, '', data[1])
+          contact[53] += f'{data[1]}|'
+          # Landline
+          contact[54] += f'{data[2]}|'
+          # Client Type          
+          contact[55] += f'{data[3]}|'
+          # District
+          contact[56] += f'{data[4]}|'
+          # Street Details
+          contact[57] += f'{data[5]}|'
+          # Country
+          if contact[58] == '':
+            contact[58] += f'{data[6]}'
+          else:
+            if data[6] not in contact[58]:
+              contact[58] += f'|{data[6]}'
+          # City
+          contact[59] += f'{data[7]}|'
+          # Mobile 2
+          m1 = data[8]
+          m2 = data[9]
+          if contact[60] == '':
+            if m1 != '':
+              contact[60] = m1
+            elif m2 != '':
+              contact[60] = m2
+          # Model
+          contact[61] += f'{data[10]}|'
+          # Call Feedback
+          contact[62] += f'{data[11]}|'
+          # Vehicle Service Tracker
+          contact[63] += f'{data[12]}|'
+          # App User Experience
+          contact[64] += f'{data[13]}|'
+          # Order
+          contact[65] += f'{data[14]}|'
+          # Points Awareness
+          contact[66] += f'{data[15]}|'
+          # Other Comments
+          contact[67] += f'{data[16]}|'
+          # Client Case
+          contact[68] += f'{data[17]}|'
+          # Next Action Data
+          contact[69] += f'{data[18]}|'
+          # Converted Lead ID
+          contact[70] += f'{data[19]}|'
+                     
     # ADD WolfApp ClientName
     contact.append('|')
+    # Add WolfApp Old Mobile
     contact.append('|')
+    # Add WolfApp Email
+    contact.append('|')
+    # Add WolfApp City
+    contact.append('|')
+    # Add WolfApp ClientPasswordPlain
+    contact.append('|')
+    # Add WolfApp ClientStatus
+    contact.append('|')
+    # Add WolfApp ClientPoints
+    contact.append('|')
+    # Clean Wolf IDs
     wolfids = contact[6]
     cleanWolfids = wolfids.split('|')
     cleanWolfids.remove('')
@@ -1054,23 +1223,46 @@ def getAllContacts(
     for wolfid in cleanWolfids:
       for data in wolfData:
         if int(wolfid) == int(data[0]):
+          # Name
           data[1] = re.sub(namePattern, '', data[1])
           if contact[7] == '':
             contact[7] += f'{data[1]}'
           else:
-            if shouldAdd(f'{data[1]}', contact[45]):
-              contact[45] += f'{data[1]}|'
-            
+            if shouldAdd(f'{data[1]}', contact[71]):
+              contact[71] += f'{data[1]}|'
+          # Old Mobile
           if data[2] != '':
-            contact[46] += f'{data[2]}|'
-
+            contact[72] += f'{data[2]}|'
+          # Email
+          contact[73] += f'{data[3]}|'
+          # City
+          try:
+            WolfCityName = WolfCity[str(data[4])]
+          except:
+            WolfCityName = ''
+          contact[74] += f'{WolfCityName}|'
+          # Client Password Plain
+          contact[75] += f'{data[5]}|'
+          # ClientStatus
+          contact[76] += f'{data[6]}|'
+          # Client Points
+          contact[77] += f'{data[7]}|'
+          
     # ADD Is Company w Change Company ID to Related Company
     contact.append('')
     if contact[2] == '':
-      contact[47] = '1'
-      contact.append('')
+      if contact[3] != '|' or contact[4] != '|':
+        if 'Delivery' not in contact[13]:
+          contact[78] = '1'
+          contact.append('')
+        else:
+          contact[78] = '0'
+          contact.append('')
+      else:
+          contact[78] = '0'
+          contact.append('')
     else:
-      contact[48] = '0'
+      contact[78] = '0'
       relatedCompanyID = contact[2]
       for c in orderedAllContacts:
         if c[0] == relatedCompanyID:
@@ -1148,9 +1340,40 @@ def exportExcel(allContacts):
       
       'VTContacts otherNames',
       'VTContacts Old Mobiles',
+      'VTContacts Email',
+      'VTContacts ContactNo',
+      'VTContacts Salutation',
+      'VTContacts Vehicle Type',
+      'VTContacts Contact Brand',
+      'VTContacts Year Of Made',
+      'VTContacts Client Point',
+      'VTContacts Add Point',
+      'VTContacts Name in Arabic',
+      'VTContacts Landline',
+      'VTContacts Client Type',
+      'VTContacts District',
+      'VTContacts Street Details',
+      'VTContacts Country',
+      'VTContacts City',
+      'VTContacts Mobile 2',
+      'VTContacts Model',
+      'VTContacts Call Feedback',
+      'VTContacts Vehicle Service Tracker',
+      'VTContacts App User Experience',
+      'VTContacts Order',
+      'VTContacts Points Awareness',
+      'VTContacts Other Comments',
+      'VTContacts Client Case',
+      'VTContacts Next Action Date',
+      'VTContacts Converted Lead ID',
       
       'WolfApp ClientName',
       'WolfApp Old Mobiles',
+      'WolfApp ClientEmail',
+      'WolfApp City',
+      'WolfApp ClientPasswordPlain',
+      'WolfApp ClientStatus',
+      'WolfApp ClientPoints',
       
       'Is a company',
       'Related company'
@@ -1213,10 +1436,41 @@ def exportExcel(allContacts):
     'VTAccount States',
     'VTAccount Converted Lead ID',
     
+    'VTContacts Email',
+    'VTContacts ContactNo',
+    'VTContacts Salutation',
+    'VTContacts Vehicle Type',
+    'VTContacts Contact Brand',
+    'VTContacts Year Of Made',
+    'VTContacts Client Point',
+    'VTContacts Add Point',
+    'VTContacts Name in Arabic',
+    'VTContacts Landline',
+    'VTContacts Client Type',
+    'VTContacts District',
+    'VTContacts Street Details',
+    'VTContacts Country',
+    'VTContacts City',
+    'VTContacts Mobile 2',
+    'VTContacts Model',
+    'VTContacts Call Feedback',
+    'VTContacts Vehicle Service Tracker',
+    'VTContacts App User Experience',
+    'VTContacts Order',
+    'VTContacts Points Awareness',
+    'VTContacts Other Comments',
+    'VTContacts Client Case',
+    'VTContacts Next Action Date',
+    'VTContacts Converted Lead ID',
     
+    'WolfApp ClientEmail',
+    'WolfApp City',
+    'WolfApp ClientPasswordPlain',
+    'WolfApp ClientStatus',
+    'WolfApp ClientPoints',
   ]
   allContactsDf = allContactsDf.reindex(columns=column_names)
-  file_name = 'AllContactsV6.4.xlsx'
+  file_name = 'AllContactsV8.0.xlsx'
   allContactsDf.to_excel(file_name)
   
 # Getting Softex Data
@@ -1229,7 +1483,7 @@ print('------SUCCESS------')
 
 # Getting VTiger Data
 print('Gathering VTiger Data...')
-vtigerContactDetailsMobiles, vtigerAccountPhone, vtigerContactDetailsPhone, vtigerAccountOtherPhone, vtigerAccountsData, vtigerContactsData, vtigerAccountsExtraData = vtiger()
+vtigerContactDetailsMobiles, vtigerAccountPhone, vtigerContactDetailsPhone, vtigerAccountOtherPhone, vtigerAccountsData, vtigerContactsData, vtigerAccountsExtraData, vtigerContactsExtraData = vtiger()
 print('Cleaning VTiger Data...')
 correctedVtigerContactDetailsMobile, brokenVtigerContactDetailsMobile = phoneCleaner(vtigerContactDetailsMobiles)
 correctedVtigerAccountPhone, brokenVtigerAccountPhone = phoneCleaner(vtigerAccountPhone)
@@ -1258,7 +1512,8 @@ allContacts = getAllContacts(
   vtigerAccountsData,
   vtigerContactsData,
   wolfData,
-  vtigerAccountsExtraData
+  vtigerAccountsExtraData,
+  vtigerContactsExtraData
 )
 print('------Merge COMPLETE------')
 print('Exporting to Excel...')
