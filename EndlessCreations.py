@@ -172,7 +172,8 @@ SoftexCtype = {
   '53': 'Coolection by Saber',
   '54': 'Coolection by Nabil',
   '1053': 'Collection by Merna',
-  '1054': 'Lagence'
+  '1054': 'Lagence',
+  '1055': 'Supported by Alaa'
 }
 
 SoftexBranch = {
@@ -340,7 +341,7 @@ def softex():
   cursor.execute('SELECT mobile, serial FROM dbo.clients')
   softexMobile = cursor.fetchall()
   
-  cursor.execute('SELECT serial, name, phone, mobile, climit, city, area, ctype, branch, salesman, taxesno, commercialno, email, freedays, scode, status, paymenttype, allowcoin, person FROM dbo.clients')
+  cursor.execute('SELECT serial, name, phone, mobile, climit, city, area, ctype, branch, salesman, taxesno, commercialno, email, freedays, scode, status, paymenttype, allowcoin, person, address FROM dbo.clients')
   softexData = cursor.fetchall()
    
   return softexPhone, softexMobile, softexData
@@ -901,6 +902,8 @@ def getAllContacts(
     contact.append('|')
     # Add Softex person
     contact.append('|')
+    # Add Softex address
+    contact.append('|')
     
     for serial in cleanSerials:
       for data in softexData:
@@ -957,6 +960,8 @@ def getAllContacts(
           # Person
           data[18] = re.sub(namePattern, '', data[18])
           contact[24] += f'{data[18]}|'
+          # Address
+          contact[25] += f'{data[19]}|'
 
     # ADD VTAccount accountname
     contact.append('|')
@@ -1005,56 +1010,58 @@ def getAllContacts(
         if int(accountid) == int(data[0]):
           # Name
           data[1] = re.sub(namePattern, '', data[1])
-          if shouldAdd(data[1], contact[25]):
-            contact[25] += f'{data[1]}|'
+          if contact[7] == '':
+            contact[7] += data[1]
+          elif shouldAdd(data[1], contact[26]):
+            contact[26] += f'{data[1]}|'
           # Mobiles
           if data[2] != '':
-            contact[26] += f'{data[2]}|'
+            contact[27] += f'{data[2]}|'
           if data[3] != '':
-            contact[26] += f'{data[3]}|'
+            contact[28] += f'{data[3]}|'
           # Isconvertedfromlead
-          contact[27] += f'{data[4]}|'
+          contact[28] += f'{data[4]}|'
           # Account No
-          contact[28] += f'{data[5]}|'
+          contact[29] += f'{data[5]}|'
       # Add Extra data 
       for data in vtigerAccountsExtraData:
         if int(accountid) == int(data[0]):
           # Streeet Detaiks
-          contact[29] += f'{data[1]}|'
+          contact[30] += f'{data[1]}|'
           # Building No
-          contact[30] += f'{data[2]}|'
+          contact[31] += f'{data[2]}|'
           # Country
-          if contact[31] == '':
-            contact[31] += f'{data[3]}'
+          if contact[32] == '':
+            contact[32] += f'{data[3]}'
           else:
-            if data[3] not in contact[31]:
-              contact[31] += f'|{data[3]}'
+            if data[3] not in contact[32]:
+              contact[32] += f'|{data[3]}'
           # Client Type
-          contact[32] += f'{data[4]}|'
+          contact[33] += f'{data[4]}|'
           # Way Of Payment
-          contact[33] += f'{data[5]}|'
+          contact[34] += f'{data[5]}|'
           # Contact Peson 1 & 2
           data[6] = re.sub(namePattern, '', data[6])
           data[7] = re.sub(namePattern, '', data[7])
           # 1
-          contact[34] += f'{data[6]}|'
+          contact[35] += f'{data[6]}|'
           # 2
-          contact[35] += f'{data[7]}|'
+          contact[36] += f'{data[7]}|'
           # Organization Type
-          contact[36] += f'{data[8]}|'
+          contact[37] += f'{data[8]}|'
           # SalesMan
           data[9] = re.sub(namePattern, '', data[9])
-          contact[37] += f'{data[9]}|'
+          contact[38] += f'{data[9]}|'
           # Location Link
-          contact[38] += f'{data[10]}|'
+          contact[39] += f'{data[10]}|'
           # Area
-          contact[39] += f'{data[11]}|'
+          contact[40] += f'{data[11]}|'
           # Brands
-          contact[40] += f'{data[12]}|'
+          contact[41] += f'{data[12]}|'
           # State
-          contact[41] += f'{data[13]}|'
+          contact[42] += f'{data[13]}|'
           # Converted Lead ID
-          contact[42] += f'{data[14]}|'
+          contact[43] += f'{data[14]}|'
           
     # ADD VTContact firstname + lastname
     contact.append('|')
@@ -1127,79 +1134,79 @@ def getAllContacts(
           if contact[7] == '':
             contact[7] += f'{data[1]} {data[2]}'
           else:
-            if shouldAdd(f'{data[1]} {data[2]}', contact[43]):
-              contact[43] += f'{data[1]} {data[2]}|'
+            if shouldAdd(f'{data[1]} {data[2]}', contact[44]):
+              contact[44] += f'{data[1]} {data[2]}|'
           # Old Mobiles
           if data[3] != '':
-            contact[44] += f'{data[3]}|'
+            contact[45] += f'{data[3]}|'
           if data[4] != '':
-            contact[44] += f'{data[4]}|'
+            contact[45] += f'{data[4]}|'
           # Email
-          contact[45] += f'{data[5]}|'
+          contact[46] += f'{data[5]}|'
           # ContactNo
-          contact[46] += f'{data[6]}|'
+          contact[47] += f'{data[6]}|'
           # Salutation
-          contact[47] += f'{data[7]}|'
+          contact[48] += f'{data[7]}|'
           # Vehicle Type
-          contact[48] += f'{data[8]}|'
+          contact[49] += f'{data[8]}|'
           # Contact Brand
-          contact[49] += f'{data[9]}|'
+          contact[50] += f'{data[9]}|'
           # Year Of Made
-          contact[50] += f'{data[10]}|'
+          contact[51] += f'{data[10]}|'
           # Client Point
-          contact[51] += f'{data[11]}|'
+          contact[52] += f'{data[11]}|'
           # Add Point
-          contact[52] += f'{data[12]}|'
+          contact[53] += f'{data[12]}|'
       
       for data in vtigerContactsExtraData:
         if int(contactid) == int(data[0]):
           # Name in Arabic
           data[1] = re.sub(namePattern, '', data[1])
-          contact[53] += f'{data[1]}|'
+          contact[54] += f'{data[1]}|'
           # Landline
-          contact[54] += f'{data[2]}|'
+          contact[55] += f'{data[2]}|'
           # Client Type          
-          contact[55] += f'{data[3]}|'
+          contact[56] += f'{data[3]}|'
           # District
-          contact[56] += f'{data[4]}|'
+          contact[57] += f'{data[4]}|'
           # Street Details
-          contact[57] += f'{data[5]}|'
+          contact[58] += f'{data[5]}|'
           # Country
-          if contact[58] == '':
-            contact[58] += f'{data[6]}'
+          if contact[59] == '':
+            contact[59] += f'{data[6]}'
           else:
-            if data[6] not in contact[58]:
-              contact[58] += f'|{data[6]}'
+            if data[6] not in contact[59]:
+              contact[59] += f'|{data[6]}'
           # City
-          contact[59] += f'{data[7]}|'
+          contact[60] += f'{data[7]}|'
           # Mobile 2
           m1 = data[8]
           m2 = data[9]
-          if contact[60] == '':
+          if contact[61] == '':
             if m1 != '':
-              contact[60] = m1
+              contact[61] = m1
             elif m2 != '':
-              contact[60] = m2
+              contact[61] = m2
           # Model
-          contact[61] += f'{data[10]}|'
+          contact[62] += f'{data[10]}|'
           # Call Feedback
-          contact[62] += f'{data[11]}|'
+          contact[63] += f'{data[11]}|'
           # Vehicle Service Tracker
-          contact[63] += f'{data[12]}|'
+          contact[64] += f'{data[12]}|'
           # App User Experience
-          contact[64] += f'{data[13]}|'
+          contact[65] += f'{data[13]}|'
           # Order
-          contact[65] += f'{data[14]}|'
+          contact[66] += f'{data[14]}|'
           # Points Awareness
-          contact[66] += f'{data[15]}|'
+          contact[67] += f'{data[15]}|'
           # Other Comments
-          contact[67] += f'{data[16]}|'
+          contact[68] += f'{data[16]}|'
           # Client Case
-          contact[68] += f'{data[17]}|'
+          contact[69] += f'{data[17]}|'
           # Next Action Data
-          contact[69] += f'{data[18]}|'
+          contact[70] += f'{data[18]}|'
           # Converted Lead ID
-          contact[70] += f'{data[19]}|'
+          contact[71] += f'{data[19]}|'
                      
     # ADD WolfApp ClientName
     contact.append('|')
@@ -1228,41 +1235,41 @@ def getAllContacts(
           if contact[7] == '':
             contact[7] += f'{data[1]}'
           else:
-            if shouldAdd(f'{data[1]}', contact[71]):
-              contact[71] += f'{data[1]}|'
+            if shouldAdd(f'{data[1]}', contact[72]):
+              contact[72] += f'{data[1]}|'
           # Old Mobile
           if data[2] != '':
-            contact[72] += f'{data[2]}|'
+            contact[73] += f'{data[2]}|'
           # Email
-          contact[73] += f'{data[3]}|'
+          contact[74] += f'{data[3]}|'
           # City
           try:
             WolfCityName = WolfCity[str(data[4])]
           except:
             WolfCityName = ''
-          contact[74] += f'{WolfCityName}|'
+          contact[75] += f'{WolfCityName}|'
           # Client Password Plain
-          contact[75] += f'{data[5]}|'
+          contact[76] += f'{data[5]}|'
           # ClientStatus
-          contact[76] += f'{data[6]}|'
+          contact[77] += f'{data[6]}|'
           # Client Points
-          contact[77] += f'{data[7]}|'
+          contact[78] += f'{data[7]}|'
           
     # ADD Is Company w Change Company ID to Related Company
     contact.append('')
     if contact[2] == '':
       if contact[3] != '|' or contact[4] != '|':
         if 'Delivery' not in contact[13]:
-          contact[78] = '1'
+          contact[79] = '1'
           contact.append('')
         else:
-          contact[78] = '0'
+          contact[79] = '0'
           contact.append('')
       else:
-          contact[78] = '0'
+          contact[79] = '0'
           contact.append('')
     else:
-      contact[78] = '0'
+      contact[79] = '0'
       relatedCompanyID = contact[2]
       for c in orderedAllContacts:
         if c[0] == relatedCompanyID:
@@ -1286,97 +1293,337 @@ def orderContacts(allContacts):
         if allContacts[i][0] == allContacts[j][2]:
           ordered.append(allContacts[j])
   
-  return ordered          
+  return ordered
+
+def CamelCaseName(name):
+  name.lower()
+  name = name.split(' ')
+  name = list(filter(lambda x: x != '', name))
+  camelName = ''
+  for i, n in enumerate(name):
+    camelName += n.capitalize()
+    if i != len(name) - 1:
+      camelName += ' '
+  return camelName
+
+def FormatNames(names):
+  formattedNames = []
+  names = names.split('|')
+  names = list(filter(lambda x: x != '', names))
+  for name in names:
+    formattedNames.append(CamelCaseName(name))
+  return formattedNames
+
+def CombineAddress(a1,a2):
+  a3 = []
+  for i in range(len(a1)):
+    try:
+      a3.append(f'{a1[i]}, {a2[i]}')
+    except:
+      a3.append(f'{a1[i]}')
+  return a3
+  
+def refactorData(data):
+  refactoredData = []
+  for record in data:
+    newRecord = []
+    
+    # Name 7
+    name = record[7]
+    name = CamelCaseName(name)
+    newRecord.append(name)
+    
+    # Is A Company
+    isCompany = record[79]
+    newRecord.append(isCompany)
+    
+    # Related Company
+    relatedCompanyName = record[80]
+    relatedCompanyName = CamelCaseName(relatedCompanyName)
+    newRecord.append(relatedCompanyName)
+
+    # Other Names
+    # 8: Softex, 26: VTA, 44: VTC, 72: WolfApp, Filled in order
+    sNames, vaNames, vcNames, wNames = record[8], record[26], record[44], record[72]
+    otherNames = ''
+    # Softex
+    sNames = FormatNames(sNames)
+    for n in sNames:
+      if n not in name:
+        if n not in otherNames:
+          otherNames += f'|{n}'
+    # VTA
+    vaNames = FormatNames(vaNames)
+    for n in vaNames:
+      if n not in name:
+        if n not in otherNames:
+          otherNames += f'|{n}'
+    # VTC
+    vcNames = FormatNames(vcNames)
+    for n in vcNames:
+      if n not in name:
+        if n not in otherNames:
+          otherNames += f'|{n}'
+    # Wolf
+    wNames = FormatNames(wNames)
+    for n in wNames:
+      if n not in name:
+        if n not in otherNames:
+          otherNames += f'|{n}'
+    newRecord.append(otherNames[1:])
+    
+    # Email
+    # 18: Softex, 46: VTAccount, 74: WolfApp, Filled in order
+    sEmail, vEmail, wEmail = record[18], record[46], record[74]
+    Email = ''
+    otherEmails = ''
+    # Softex
+    sEmail = sEmail.split('|')
+    sEmail = list(filter(lambda x: x != '', sEmail))
+    if sEmail != []:
+      Email = sEmail[0]
+      for i in range(1, len(sEmail)):
+        if sEmail[i] not in otherEmails:
+          otherEmails += f'|{sEmail[i]}'
+    # VT
+    vEmail = vEmail.split('|')
+    vEmail = list(filter(lambda x: x != '', vEmail))
+    if vEmail != []:
+      if Email == '':
+        Email = vEmail[0]
+        for i in range(1, len(vEmail)):
+          if vEmail[i] not in otherEmails:
+            otherEmails += f'|{vEmail[i]}'
+      else:
+        for email in vEmail:
+          if email not in Email:
+            if email not in otherEmails:
+              otherEmails += f'|{email}'
+    # Wolf
+    wEmail = wEmail.split('|')
+    wEmail = list(filter(lambda x: x != '', wEmail))
+    if wEmail != []:
+      if Email == '':
+        Email = wEmail[0]
+        for i in range(1, len(wEmail)):
+          if wEmail[i] not in otherEmails:
+            otherEmails += f'|{wEmail[i]}'   
+      else:
+        for email in wEmail:
+          if email not in Email:
+            if email not in otherEmails:
+              otherEmails += f'|{email}'
+    newRecord.append(Email)
+    newRecord.append(otherEmails[1:])
+    
+    # Mobiles
+    mobiles = record[1]
+    newRecord.append(mobiles[1:len(mobiles)-1])
+    
+    # Street Address
+    # 25: Softex, 30 + 31: VTA, 57 + 58: VTC
+    address = ''
+    sAddress, vaAddress1, vaAddress2, vcAddress1, vcAddress2, wAddress = record[25], record[30], record[31], record[57], record[58], record[71]
+    vaAddress1 = vaAddress1[1:len(vaAddress1)-1]
+    vaAddress2 = vaAddress2[1:len(vaAddress2)-1]
+    vaAddress = CombineAddress(vaAddress1,vaAddress2)
+    vcAddress1 = vcAddress1[1:len(vcAddress1)-1]
+    vcAddress2 = vcAddress2[1:len(vcAddress2)-1]
+    vcAddress = CombineAddress(vcAddress1,vcAddress2)
+    # Softex
+    sAddress = sAddress.split('|')
+    sAddress = list(filter(lambda x: x != '', sAddress))
+    for a in sAddress:
+      if a not in address:
+        address += f'|{a}'
+    # VTA
+    vaAddress = list(filter(lambda x: x != '', vaAddress))
+    for a in vaAddress:
+      if a not in address:
+        address += f'|{a}'
+    # VTC
+    vcAddress = list(filter(lambda x: x != '', vcAddress))
+    for a in vcAddress:
+      if a not in address:
+        address += f'|{a}'
+    # WolfApp
+    wAddress = wAddress.split('|')
+    wAddress = list(filter(lambda x: x != '', wAddress))
+    for a in wAddress:
+      if a not in address:
+        address += f'|{a}'
+    newRecord.append(address[1:])
+
+    # Area
+    # 12: Softex, 40: VTA
+    area = ''
+    sArea, vaArea = record[12], record[40]
+    # Softex
+    sArea = sArea.split('|')
+    sArea = list(filter(lambda x: x != '', sArea))
+    for ar in sArea:
+      if ar not in area:
+        area += f'|{ar}'
+    # VTA
+    vaArea = vaArea.split('|')
+    vaArea = list(filter(lambda x: x != '', vaArea))
+    for ar in vaArea:
+      if ar not in area:
+        area += f'|{ar}'
+    newRecord.append(area[1:])
+    
+    # State
+    # 42: VTA
+    State = ''
+    vStates = record[42]
+    vStates = vStates.split('|')
+    vStates = list(filter(lambda x: x != '', vStates))
+    for s in vStates:
+      if s not in State:
+        State += f'|{s}'
+    newRecord.append(State[1:])
+    
+    # City
+    # 11: Softex, 42: VTA, 60: VTC, 75: WolfApp
+    City = ''
+    sCity, vaCity, vcCity, wCity = record[11], record[42], record[60], record[75]
+    # Softex
+    if sCity not in City:
+      City += sCity
+    # VTA
+    vaCity = vaCity.split('|')
+    vaCity = list(filter(lambda x: x != '', vaCity))
+    for c in vaCity:
+      if c not in vaCity:
+        City += f'|{c}'
+    # VTC
+    vcCity = vcCity.split('|')
+    vcCity = list(filter(lambda x: x != '', vcCity))
+    for c in vcCity:
+      if c not in vcCity:
+        City += f'|{c}'
+    # WolfApp
+    wCity = wCity.split('|')
+    wCity = list(filter(lambda x: x != '', wCity))
+    for c in wCity:
+      if c not in wCity:
+        City += f'|{c}'   
+    newRecord.append(City[1:])
+    
+
+        
+        
+    refactoredData.append(newRecord)
+  refactoredDataDf = pd.DataFrame(
+    refactoredData,
+    columns=[
+      'Name',
+      'Is A Company',
+      'Related Company',
+      'Other Names',
+      'Email',
+      'Other Emails',
+      'Mobiles',
+      'Street Address',
+      'Area',
+      'State',
+      'City'
+    ]
+  )
+  file_name = 'RefactoredV3.xlsx'
+  refactoredDataDf.to_excel(file_name)
+    
   
 def exportExcel(allContacts):
   allContactsDf = pd.DataFrame(
     allContacts,
     columns=[
-      'ID',
-      'Mobiles',
-      'CompanyID',
-      'Softex serial',
-      'VTAccount accountid',
-      'VTContactDetails contactid',
-      'WolfApp IDClient',
-      'Name',
+      'ID',  # 0
+      'Mobiles',  # 1
+      'CompanyID',  # 2
+      'Softex serial',  # 3
+      'VTAccount accountid',  # 4
+      'VTContactDetails contactid',  # 5
+      'WolfApp IDClient',  # 6
+      'Name',  # 7
       
-      'Softex otherNames',
-      'Softex Old Mobiles',
-      'Softex climit',
-      'Softex City',
-      'Softex Area',
-      'Softex ctype',
-      'Softex branch',
-      'Softex salesman',
-      'Softex taxesno',
-      'Softex commercialno',
-      'Softex email',
-      'Softex freedays',
-      'Softex scode',
-      'Softex status',
-      'Softex paymenttype',
-      'Softex allowcoin',
-      'Softex person',
+      'Softex otherNames',  # 8
+      'Softex Old Mobiles',  # 9
+      'Softex climit',  # 10
+      'Softex City',  # 11
+      'Softex Area',  # 12
+      'Softex ctype',  # 13
+      'Softex branch',  # 14
+      'Softex salesman',  # 15
+      'Softex taxesno',  # 16
+      'Softex commercialno',  # 17
+      'Softex email',  # 18
+      'Softex freedays',  # 19
+      'Softex scode',  # 20
+      'Softex status',  # 21
+      'Softex paymenttype',  # 22
+      'Softex allowcoin',  # 23
+      'Softex person',  # 24
+      'Softex address',  # 25
       
-      'VTAccount accountname',
-      'VTAccount Old Mobiles',
-      'VTAccount isconvertedfromlead',
-      'VTAccount AccountNo',
-      'VTAccount Street Details',
-      'VTAccount BuildingNo',
-      'VTAccount Country',
-      'VTAccount Client Type',
-      'VTAccount Way Of Payment',
-      'VTAccount Contact Person 1',
-      'VTAccount Contact Person 2',
-      'VTAccount Organization Type',
-      'VTAccount Salesman',
-      'VTAccount Location Link',
-      'VTAccount Area',
-      'VTAccount Brands',
-      'VTAccount States',
-      'VTAccount Converted Lead ID',
+      'VTAccount accountname',  # 26
+      'VTAccount Old Mobiles',  # 27
+      'VTAccount isconvertedfromlead',  # 28
+      'VTAccount AccountNo',  # 29
+      'VTAccount Street Details',  # 30
+      'VTAccount BuildingNo',  # 31
+      'VTAccount Country',  # 32
+      'VTAccount Client Type',  # 33
+      'VTAccount Way Of Payment',  # 34
+      'VTAccount Contact Person 1',  # 35
+      'VTAccount Contact Person 2',  # 36
+      'VTAccount Organization Type',  # 37
+      'VTAccount Salesman',  # 38
+      'VTAccount Location Link',  # 39
+      'VTAccount Area',  # 40
+      'VTAccount Brands',  # 41
+      'VTAccount States',  # 42
+      'VTAccount Converted Lead ID',  # 43
       
-      'VTContacts otherNames',
-      'VTContacts Old Mobiles',
-      'VTContacts Email',
-      'VTContacts ContactNo',
-      'VTContacts Salutation',
-      'VTContacts Vehicle Type',
-      'VTContacts Contact Brand',
-      'VTContacts Year Of Made',
-      'VTContacts Client Point',
-      'VTContacts Add Point',
-      'VTContacts Name in Arabic',
-      'VTContacts Landline',
-      'VTContacts Client Type',
-      'VTContacts District',
-      'VTContacts Street Details',
-      'VTContacts Country',
-      'VTContacts City',
-      'VTContacts Mobile 2',
-      'VTContacts Model',
-      'VTContacts Call Feedback',
-      'VTContacts Vehicle Service Tracker',
-      'VTContacts App User Experience',
-      'VTContacts Order',
-      'VTContacts Points Awareness',
-      'VTContacts Other Comments',
-      'VTContacts Client Case',
-      'VTContacts Next Action Date',
-      'VTContacts Converted Lead ID',
+      'VTContacts otherNames',  # 44
+      'VTContacts Old Mobiles',  # 45
+      'VTContacts Email',  # 46
+      'VTContacts ContactNo',  # 47
+      'VTContacts Salutation',  # 48
+      'VTContacts Vehicle Type',  # 49
+      'VTContacts Contact Brand',  # 50
+      'VTContacts Year Of Made',  # 51
+      'VTContacts Client Point',  # 52
+      'VTContacts Add Point',  # 53
+      'VTContacts Name in Arabic',  # 54
+      'VTContacts Landline',  # 55
+      'VTContacts Client Type',  # 56
+      'VTContacts District',  # 57
+      'VTContacts Street Details',  # 58
+      'VTContacts Country',  # 59
+      'VTContacts City',  # 60
+      'VTContacts Mobile 2',  # 61
+      'VTContacts Model',  # 62
+      'VTContacts Call Feedback',  # 63
+      'VTContacts Vehicle Service Tracker',  # 64
+      'VTContacts App User Experience',  # 65
+      'VTContacts Order',  # 66
+      'VTContacts Points Awareness',  # 67
+      'VTContacts Other Comments',  # 68
+      'VTContacts Client Case',  # 69
+      'VTContacts Next Action Date',  # 70
+      'VTContacts Converted Lead ID',  # 71
       
-      'WolfApp ClientName',
-      'WolfApp Old Mobiles',
-      'WolfApp ClientEmail',
-      'WolfApp City',
-      'WolfApp ClientPasswordPlain',
-      'WolfApp ClientStatus',
-      'WolfApp ClientPoints',
+      'WolfApp ClientName',  # 72
+      'WolfApp Old Mobiles',  # 73
+      'WolfApp ClientEmail',  # 74
+      'WolfApp City',  # 75
+      'WolfApp ClientPasswordPlain',  # 76
+      'WolfApp ClientStatus',  # 77
+      'WolfApp ClientPoints',  # 78
       
-      'Is a company',
-      'Related company'
+      'Is a company',  # 79
+      'Related company'  # 80
     ]
   )
   column_names = [
@@ -1418,6 +1665,7 @@ def exportExcel(allContacts):
     'Softex paymenttype',
     'Softex allowcoin',
     'Softex person',
+    'Softex address',
     
     'VTAccount AccountNo',
     'VTAccount isconvertedfromlead',
@@ -1470,7 +1718,7 @@ def exportExcel(allContacts):
     'WolfApp ClientPoints',
   ]
   allContactsDf = allContactsDf.reindex(columns=column_names)
-  file_name = 'AllContactsV8.0.xlsx'
+  file_name = 'AllContactsV9.xlsx'
   allContactsDf.to_excel(file_name)
   
 # Getting Softex Data
@@ -1517,7 +1765,8 @@ allContacts = getAllContacts(
 )
 print('------Merge COMPLETE------')
 print('Exporting to Excel...')
-exportExcel(allContacts) 
+refactorData(allContacts)
+#exportExcel(allContacts) 
 print('------Export COMPLETE------')
 
 # Timing Program
