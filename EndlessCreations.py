@@ -1,5 +1,6 @@
 from pprint import pprint
 import re
+from typing import ValuesView
 from numpy import nancumsum
 
 # Connection Imports
@@ -223,38 +224,38 @@ SoftexSalesman = {
 WolfCity = {
   'nan': '',
   
-  '1': 'Cairo',
-  '2': 'Giza',
-  '3': 'Alex',
-  '4': 'Suez',
-  '5': 'Ismailia',
-  '6': 'Port Said',
-  '7': 'Qalyobia',
-  '8': 'Minoufiya',
-  '9': 'Sharqia',
-  '10': 'Gharbiya',
-  '11': 'Daqahlya',
-  '12': 'Kafr El-Shiekh',
-  '13': 'Damietta',
-  '14': 'Behaira',
-  '15': 'Fayuom',
-  '16': 'Miniya',
-  '17': 'Assuit',
-  '18': 'Sohag',
-  '19': 'Beni-Suef',
-  '20': 'Qena',
-  '21': 'Aswan',
-  '22': 'Luxor',
-  '23': 'Red Sea',
-  '24': 'South Sinaa',
-  '25': 'North Coast and Matrouh',
-  '26': 'New Valley',
-  '27': 'North Sinai',
-  '28': 'Abu Simbel',
-  '29': 'Marsa Allam',
-  '30': 'Salloum',
-  '31': 'Halayb And Shalatin',
-  '32': 'Oasis and other towns and vllages outside min city limits in zone 4 and 5'
+  '1.0': 'Cairo',
+  '2.0': 'Giza',
+  '3.0': 'Alex',
+  '4.0': 'Suez',
+  '5.0': 'Ismailia',
+  '6.0': 'Port Said',
+  '7.0': 'Qalyobia',
+  '8.0': 'Minoufiya',
+  '9.0': 'Sharqia',
+  '10.0': 'Gharbiya',
+  '11.0': 'Daqahlya',
+  '12.0': 'Kafr El-Shiekh',
+  '13.0': 'Damietta',
+  '14.0': 'Behaira',
+  '15.0': 'Fayuom',
+  '16.0': 'Miniya',
+  '17.0': 'Assuit',
+  '18.0': 'Sohag',
+  '19.0': 'Beni-Suef',
+  '20.0': 'Qena',
+  '21.0': 'Aswan',
+  '22.0': 'Luxor',
+  '23.0': 'Red Sea',
+  '24.0': 'South Sinaa',
+  '25.0': 'North Coast and Matrouh',
+  '26.0': 'New Valley',
+  '27.0': 'North Sinai',
+  '28.0': 'Abu Simbel',
+  '29.0': 'Marsa Allam',
+  '30.0': 'Salloum',
+  '31.0': 'Halayb And Shalatin',
+  '32.0': 'Oasis and other towns and vllages outside min city limits in zone 4 and 5'
 }
 
 template = {
@@ -1322,8 +1323,21 @@ def CombineAddress(a1,a2):
     except:
       a3.append(f'{a1[i]}')
   return a3
-  
+
+def canAdd(data, unique):
+  unique = unique.split('|')
+  unique.remove('')
+  flag = True
+  dataToAdd = re.sub(namePattern, '', data).lower().replace(' ','')
+  for u in unique:
+    dataToCompare = re.sub(namePattern, '', u).lower().replace(' ','')
+    if dataToAdd in dataToCompare:
+      flag = False
+      break
+  return flag
+
 def refactorData(data):
+  print('Refactoring Data...')
   refactoredData = []
   for record in data:
     newRecord = []
@@ -1350,26 +1364,26 @@ def refactorData(data):
     sNames = FormatNames(sNames)
     for n in sNames:
       if n not in name:
-        if n not in otherNames:
-          otherNames += f'|{n}'
+        if canAdd(n, otherNames):
+          otherNames += f'|{CamelCaseName(n)}'
     # VTA
     vaNames = FormatNames(vaNames)
     for n in vaNames:
       if n not in name:
-        if n not in otherNames:
-          otherNames += f'|{n}'
+        if canAdd(n, otherNames):
+          otherNames += f'|{CamelCaseName(n)}'
     # VTC
     vcNames = FormatNames(vcNames)
     for n in vcNames:
       if n not in name:
-        if n not in otherNames:
-          otherNames += f'|{n}'
+        if canAdd(n, otherNames):
+          otherNames += f'|{CamelCaseName(n)}'
     # Wolf
     wNames = FormatNames(wNames)
     for n in wNames:
       if n not in name:
-        if n not in otherNames:
-          otherNames += f'|{n}'
+        if canAdd(n, otherNames):
+          otherNames += f'|{CamelCaseName(n)}'
     newRecord.append(otherNames[1:])
     
     # Email
@@ -1419,7 +1433,8 @@ def refactorData(data):
     # Mobiles
     mobiles = record[1]
     newRecord.append(mobiles[1:len(mobiles)-1])
-    
+    # Phones
+    newRecord.append('')
     # Street Address
     # 25: Softex, 30 + 31: VTA, 57 + 58: VTC
     address = ''
@@ -1484,36 +1499,304 @@ def refactorData(data):
     newRecord.append(State[1:])
     
     # City
-    # 11: Softex, 42: VTA, 60: VTC, 75: WolfApp
+    # 11: Softex, 60: VTC, 75: WolfApp
     City = ''
-    sCity, vaCity, vcCity, wCity = record[11], record[42], record[60], record[75]
+    sCity, vcCity, wCity = record[11], record[60], record[75]
     # Softex
     if sCity not in City:
-      City += sCity
-    # VTA
-    vaCity = vaCity.split('|')
-    vaCity = list(filter(lambda x: x != '', vaCity))
-    for c in vaCity:
-      if c not in vaCity:
-        City += f'|{c}'
+      City += f'|{sCity}'
     # VTC
     vcCity = vcCity.split('|')
     vcCity = list(filter(lambda x: x != '', vcCity))
     for c in vcCity:
-      if c not in vcCity:
-        City += f'|{c}'
+      if c != '30.096941,31.6375612':
+        if c not in City:
+          try:
+            int(c)
+          except:
+            City += f'|{c}'
     # WolfApp
     wCity = wCity.split('|')
     wCity = list(filter(lambda x: x != '', wCity))
     for c in wCity:
-      if c not in wCity:
+      if c not in City:
         City += f'|{c}'   
     newRecord.append(City[1:])
     
-
+    # Country
+    newRecord.append('Egypt')
+    
+    # Other Contact Person
+    # 24: Softex, 35: VTA1, 36: VTA2
+    contactPerson = ''
+    sPerson, v1Person, v2Person = record[24], record[35], record[36]
+    sPerson = sPerson.split('|')
+    v1Person = v1Person.split('|')
+    v2Person = v2Person.split('|')
+    sPerson = list(filter(lambda x: x != '', sPerson))
+    v1Person = list(filter(lambda x: x != '', v1Person))
+    v2Person = list(filter(lambda x: x != '', v2Person))
+    # Softex
+    for s in sPerson:
+      if canAdd(s,contactPerson):
+        contactPerson += f'|{CamelCaseName(s)}'
+    # VTA
+    for v1 in v1Person:
+      if canAdd(v1,contactPerson):
+        contactPerson += f'|{CamelCaseName(v1)}' 
+    for v2 in v2Person:
+      if canAdd(v2,contactPerson):
+        contactPerson += f'|{CamelCaseName(v2)}' 
+    newRecord.append(contactPerson[1:])
+    
+    # Credit limit
+    climit = record[10]
+    climit = climit.split('|')
+    climit = list(filter(lambda x: x != '', climit))
+    newClimits = []
+    for c in climit:
+      if c[:len(c)-5] not in newClimits:
+        newClimits.append(c[:len(c)-5])
+    lowest = 99999999999999999999999
+    for c in newClimits:
+      if int(c) != 0:
+        if int(c) < lowest:
+          lowest = int(c)
+    if lowest == 99999999999999999999999:
+      lowest = 0
+    if climit == []:
+      lowest = ''
+    newRecord.append(lowest)
+    
+    # Customer Tags ( Softex ctype + VTAccount Client Type 
+    # + VTAccount Organization Type (tags) + VTAccount Brands (Tags) 
+    # + VTContacts Vehicle Type( Tags) 
+    # + VTContacts Contact Brand (tags) + VTContacts Year Of Made 
+    # + VTContacts Client Type TAGs + VTContacts Model (tags) 
+    customerTags = ''
+    # Softex Ctype
+    sCType = record[13]
+    sCType = sCType.split('|')
+    sCType = list(filter(lambda x: x != '', sCType))
+    for s in sCType:
+      if s not in customerTags:
+        customerTags += f'|{s}'
+    # VTAccount Client Type
+    vaCType = record[33]
+    vaCType = vaCType.split('|')
+    vaCType = list(filter(lambda x: x != '', vaCType))
+    for va in vaCType:
+      if va not in customerTags:
+        customerTags += f'|{va}'
+    # VTAccount Organization Type
+    oType = record[37]
+    oType = oType.split('|')
+    oType = list(filter(lambda x: x != '', oType))
+    for o in oType:
+      if o not in customerTags:
+        customerTags += f'|{o}'
+    # VTAccount Brands
+    brands = record[41] 
+    brands = brands.split('|')
+    brands = list(filter(lambda x: x != '', brands))
+    for b in brands:
+      if b not in customerTags:
+        customerTags += f'|{b}'
+    # VTContacts Vehicle Type
+    vehicleTypes = record[49] 
+    vehicleTypes = vehicleTypes.split('|')
+    vehicleTypes = list(filter(lambda x: x != '', vehicleTypes))
+    for vT in vehicleTypes:
+      if vT not in customerTags:
+        customerTags += f'|{vT}'
+    # VTContacts Contact Brand
+    contactBrands = record[50] 
+    contactBrands = contactBrands.split('|')
+    contactBrands = list(filter(lambda x: x != '', contactBrands))
+    for cB in contactBrands:
+      if cB not in customerTags:
+        customerTags += f'|{cB}'
+    # VTContacts Year of Made
+    years = record[51] 
+    years = years.split('|')
+    years = list(filter(lambda x: x != '', years))
+    for y in years:
+      if y not in customerTags:
+        customerTags += f'|{y}'
+    # VTContacts Client Type
+    vcCType = record[56]
+    vcCType = vcCType.split('|')
+    vcCType = list(filter(lambda x: x != '', vcCType))
+    for vc in vcCType:
+      if vc not in customerTags:
+        customerTags += f'|{vc}'
+    # VTContacts Model
+    model = record[62]
+    model = model.split('|')
+    model = list(filter(lambda x: x != '', model))
+    for m in model:
+      if m not in customerTags:
+        customerTags += f'|{m}'
+    
+    newRecord.append(customerTags[1:])
         
+    # EC Branch
+    ecBranch = ''
+    branch = record[14]
+    branch = branch.split('|')
+    branch = list(filter(lambda x: x != '', branch))
+    for b in branch:
+      if b not in ecBranch:
+        ecBranch += f'|{b}'
+    newRecord.append(ecBranch[1:])
+    
+    # Pre-Odoo Salesperson
+    # 15: Softex, 38: VTA
+    SalesPerson = ''
+    sSalesP, vSalesP = record[15], record[38]
+    sSalesP = sSalesP.split('|')
+    vSalesP = vSalesP.split('|')
+    sSalesP = list(filter(lambda x: x != '', sSalesP))
+    vSalesP = list(filter(lambda x: x != '', vSalesP))
+    # Softex
+    for s in sSalesP:
+      if canAdd(s,SalesPerson):
+        SalesPerson += f'|{CamelCaseName(s)}'
+    # VTA
+    for v in vSalesP:
+      if canAdd(v,SalesPerson):
+        SalesPerson += f'|{CamelCaseName(v)}'
+    newRecord.append(SalesPerson[1:])
+    
+    # TAX No
+    taxNo = ''
+    taxes = record[16]
+    taxes = taxes.split('|')
+    taxes = list(filter(lambda x: x != '', taxes))
+    for t in taxes:
+      if t not in taxNo:
+        taxNo += f'|{t}'
+    newRecord.append(taxNo[1:])
+    
+    # Company Registory
+    newCr = ''
+    cr =  record[17] 
+    cr = cr.split('|')
+    cr = list(filter(lambda x: x != '', cr))  
+    for c in cr:
+      if c not in newCr:
+        newCr += f'|{c}'
+    newRecord.append(newCr[1:])
+    
+    # Softex Freedays
+    freeDay = 999999999999999
+    sFree = record[19]
+    sFree = sFree.split('|')
+    sFree = list(filter(lambda x: x != '', sFree))
+    for s in sFree:
+      try:
+        if int(s) != 0:
+          if int(s) < freeDay:
+            freeDay = int(s)
+      except:
+        pass
+    if freeDay == 999999999999999:
+      freeDay = 0
+    if sFree == []:
+      freeDay = ''
+    newRecord.append(freeDay)
+    
+    # Softex Status 1 = True, 0 = False
+    status = False
+    st = record[21]
+    st = st.split('|')
+    st = list(filter(lambda x: x != '', st))
+    for s in st:
+      try:
+        if int(s) == 1:
+          status = True
+          break
+      except:
+        pass
+    if st == []:
+      status = ''
+    newRecord.append(status)
         
+    # Softex PaymentType 1 = Credit, 0 = Cash
+    paymentType = 'Cash'
+    payment = record[22]
+    payment = payment.split('|')
+    payment = list(filter(lambda x: x != '', payment))
+    for p in payment:
+      try:
+        if int(p) == 1:
+          paymentType = 'Credit'
+          break
+      except:
+        pass
+    if payment == []:
+      paymentType = ''
+    newRecord.append(paymentType)
+    
+    # VTAccount Location Link
+    location = ''
+    links = record[39]
+    links = links.split('|')
+    links = list(filter(lambda x: x != '', links))
+    for l in links:
+      if l not in location:
+        location += f'|{l}'
+    newRecord.append(location[1:])
+    
+    # VTContacts Vehicle Service Tracker No,None = False, Yes = True
+    service = ''
+    vService = record[64]
+    vService = vService.split('|')
+    vService = list(filter(lambda x: x != '', vService))
+    for v in vService:
+      if v == 'Yes':
+        service = True
+      elif v == 'No' or v == 'None':
+        service = False
+    newRecord.append(service)
+    
+    # VTContacts Comments
+    comment = ''
+    vComments = record[68]
+    vComments = vComments.split('|')
+    vComments = list(filter(lambda x: x != '', vComments))
+    for v in vComments:
+      if v not in comment:
+        comment += f'|{v}'
+    newRecord.append(comment[1:])
+    
+    # VTContacts Client Case
+    case = ''
+    clientCases = record[69]
+    clientCases = clientCases.split('|')
+    clientCases = list(filter(lambda x: x != '', clientCases))
+    for c in clientCases:
+      if c not in case:
+        case += f'|{c}'
+    newRecord.append(case[1:])
+    
+    # Total Loyalty Points
+    total = -1
+    points = record[78]
+    points = points.split('|')
+    points = list(filter(lambda x: x != '', points))
+    for p in points:
+      try:
+        if int(p) > total:
+          total = int(p)
+      except:
+        pass
+    if points == []:
+      total = ''
+    newRecord.append(total)
     refactoredData.append(newRecord)
+  print('------Refactoring COMPLETE------')
+  print('Exporting to Excel...')
   refactoredDataDf = pd.DataFrame(
     refactoredData,
     columns=[
@@ -1524,15 +1807,33 @@ def refactorData(data):
       'Email',
       'Other Emails',
       'Mobiles',
+      'Phones',
       'Street Address',
       'Area',
       'State',
-      'City'
+      'City',
+      'Country',
+      'Other Contact Person',
+      'Credit Limit',
+      'Customer Tags',
+      'EC Branch',
+      'Pre-Odoo Salesperson',
+      'TAX Number',
+      'Company Registory',
+      'Softex Freedays',
+      'Softex Status',
+      'Softex PaymentType',
+      'VTAccount Location Link',
+      'VTContacts Vehicle Service Tracker',
+      'VTContacts Comments',
+      'VTContacts Client Case',
+      'Total Loyalty Points'
     ]
   )
-  file_name = 'RefactoredV3.xlsx'
+  file_name = 'FinalData.xlsx'
   refactoredDataDf.to_excel(file_name)
-    
+  print(f'{file_name} has been created')
+  print('------Export COMPLETE------')
   
 def exportExcel(allContacts):
   allContactsDf = pd.DataFrame(
@@ -1764,10 +2065,7 @@ allContacts = getAllContacts(
   vtigerContactsExtraData
 )
 print('------Merge COMPLETE------')
-print('Exporting to Excel...')
 refactorData(allContacts)
 #exportExcel(allContacts) 
-print('------Export COMPLETE------')
-
 # Timing Program
-print(f'The Program took {time.time() - start_time} seconds to execute')
+print(f'The Program took {str(time.time() - start_time)[:3]} seconds to execute')
