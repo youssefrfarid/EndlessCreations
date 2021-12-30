@@ -1260,12 +1260,13 @@ def getAllContacts(
     contact.append('')
     if contact[2] == '':
       if contact[3] != '|' or contact[4] != '|':
-        if 'Delivery' not in contact[13]:
+        if '|Delivery|' != contact[13]:
           contact[79] = '1'
           contact.append('')
         else:
           contact[79] = '0'
           contact.append('')
+
       else:
           contact[79] = '0'
           contact.append('')
@@ -1336,6 +1337,106 @@ def canAdd(data, unique):
       break
   return flag
 
+def sameName(n1, n2):
+  n1 = re.sub(namePattern, '', n1).lower().replace(' ','')
+  n2 = re.sub(namePattern, '', n2).lower().replace(' ','')
+  if n1 == n2:
+    return True
+  else:
+    return False  
+
+def splitData(s):
+  if type(s) == str:
+    data = s.split('|')
+    data = list(filter(lambda x: x != '', data))
+    return data
+  else:
+    return None
+  
+def mergeData(a1, a2):
+  for i in range(3, len(a1)):
+    if a2[i] != '':
+      if i == 22:
+        if a2[i] == 'Credit':
+          a1[i] = 'Credit'
+      elif splitData(a2[i]) != None:
+        for data in splitData(a2[i]):
+          if data not in a1[i]:
+            a1[i] += f'|{data}'
+          if a1[i][0] == '|':
+            a1[i] = a1[i][1:]
+      else:
+        if i == 14 or i == 20:
+          if a1[i] == '':
+            a1[i] = a2[i]
+          else:
+            if a1[i] > a2[i]:
+              a1[i] = a2[i]
+        elif i == 27:
+          if a1[i] == '':
+            a1[i] = a2[i]
+          else:
+            if a1[i] < a2[i]:
+              a1[i] = a2[i]
+        elif i == 21 or i == 24:
+          a1[i] = a1[i] or a2[i]
+              
+  return a1
+
+def cleanDupes(contacts):
+  removeIndexes = []
+  for i in range(len(contacts)):
+    if sameName(contacts[i][0], contacts[i][2]):
+      name = contacts[i][0]
+      if name != '':
+        for j in range(i):
+          if sameName(name, contacts[j][0]):
+            mobiles = splitData(contacts[i][6])
+            found = False
+            for mobile in mobiles:
+              if mobile in contacts[j][6]:
+                found = True
+            if found:
+              print('found', name)  
+              contacts[j] = mergeData(contacts[j], contacts[i])
+              removeIndexes.append(contacts[i])
+              contacts[j][1] = '0'
+      
+              
+  print(len(contacts))
+  for r in removeIndexes:
+    contacts.remove(r)
+  print(len(contacts))
+  
+  removeIndexes = []
+  
+  for x in range(len(contacts)):
+    if contacts[x][1] == '0' and 'Delivery' in contacts[x][15]:
+      mobiles = splitData(contacts[x][6])
+      for y in range(x, len(contacts)):
+        if sameName(contacts[y][2], contacts[x][0]):
+          found = False
+          for mobile in mobiles:
+            if mobile in contacts[y][6]:
+              found = True
+              break
+          if found:
+            print('found', contacts[x][0])
+            contacts[x] = mergeData(contacts[x], contacts[y])
+            if contacts[y][0] not in contacts[x][3]:
+              contacts[x][3] += f'|{contacts[y][0]}'
+            if contacts[x][3][0] == '|':
+              contacts[x][3] = contacts[x][3][1:]
+            removeIndexes.append(contacts[y])
+    
+  print(len(contacts))
+  for r in removeIndexes:
+    contacts.remove(r)
+  print(len(contacts))
+    
+    
+  return contacts
+
 def refactorData(data):
   print('Refactoring Data...')
   refactoredData = []
@@ -1366,24 +1467,32 @@ def refactorData(data):
       if n not in name:
         if canAdd(n, otherNames):
           otherNames += f'|{CamelCaseName(n)}'
+        if name == '':
+          name = CamelCaseName(n)
     # VTA
     vaNames = FormatNames(vaNames)
     for n in vaNames:
       if n not in name:
         if canAdd(n, otherNames):
           otherNames += f'|{CamelCaseName(n)}'
+        if name == '':
+          name = CamelCaseName(n)
     # VTC
     vcNames = FormatNames(vcNames)
     for n in vcNames:
       if n not in name:
         if canAdd(n, otherNames):
           otherNames += f'|{CamelCaseName(n)}'
+        if name == '':
+          name = CamelCaseName(n)
     # Wolf
     wNames = FormatNames(wNames)
     for n in wNames:
       if n not in name:
         if canAdd(n, otherNames):
           otherNames += f'|{CamelCaseName(n)}'
+        if name == '':
+          name = CamelCaseName(n)
     newRecord.append(otherNames[1:])
     
     # Email
@@ -1449,24 +1558,28 @@ def refactorData(data):
     sAddress = sAddress.split('|')
     sAddress = list(filter(lambda x: x != '', sAddress))
     for a in sAddress:
-      if a not in address:
-        address += f'|{a}'
+      if 'n' not in a.lower() and 'nan' not in a.lower() and 'none' not in a.lower():
+        if a not in address:
+          address += f'|{a}'
     # VTA
     vaAddress = list(filter(lambda x: x != '', vaAddress))
     for a in vaAddress:
-      if a not in address:
-        address += f'|{a}'
+      if 'n' not in a.lower() and 'nan' not in a.lower() and 'none' not in a.lower():
+        if a not in address:
+          address += f'|{a}'
     # VTC
     vcAddress = list(filter(lambda x: x != '', vcAddress))
     for a in vcAddress:
-      if a not in address:
-        address += f'|{a}'
+      if 'n' not in a.lower() and 'nan' not in a.lower() and 'none' not in a.lower():
+        if a not in address:
+          address += f'|{a}'
     # WolfApp
     wAddress = wAddress.split('|')
     wAddress = list(filter(lambda x: x != '', wAddress))
     for a in wAddress:
-      if a not in address:
-        address += f'|{a}'
+      if 'n' not in a.lower() and 'nan' not in a.lower() and 'none' not in a.lower():
+        if a not in address:
+          address += f'|{a}'
     newRecord.append(address[1:])
 
     # Area
@@ -1579,64 +1692,73 @@ def refactorData(data):
     sCType = sCType.split('|')
     sCType = list(filter(lambda x: x != '', sCType))
     for s in sCType:
-      if s not in customerTags:
-        customerTags += f'|{s}'
+      if str(s) != 'None' and str(s) != '##':
+        if s not in customerTags:
+          customerTags += f'|{s}'
     # VTAccount Client Type
     vaCType = record[33]
     vaCType = vaCType.split('|')
     vaCType = list(filter(lambda x: x != '', vaCType))
     for va in vaCType:
-      if va not in customerTags:
-        customerTags += f'|{va}'
+      if str(va) != 'None' and str(va) != '##':
+        if va not in customerTags:
+          customerTags += f'|{va}'
     # VTAccount Organization Type
     oType = record[37]
     oType = oType.split('|')
     oType = list(filter(lambda x: x != '', oType))
     for o in oType:
-      if o not in customerTags:
-        customerTags += f'|{o}'
+      if str(o) != 'None' and str(o) != '##':
+        if o not in customerTags:
+          customerTags += f'|{o}'
     # VTAccount Brands
     brands = record[41] 
     brands = brands.split('|')
     brands = list(filter(lambda x: x != '', brands))
     for b in brands:
-      if b not in customerTags:
-        customerTags += f'|{b}'
+      if str(b) != 'None' and str(b) != '##':
+        if b not in customerTags:
+          customerTags += f'|{b}'
     # VTContacts Vehicle Type
     vehicleTypes = record[49] 
     vehicleTypes = vehicleTypes.split('|')
     vehicleTypes = list(filter(lambda x: x != '', vehicleTypes))
     for vT in vehicleTypes:
-      if vT not in customerTags:
-        customerTags += f'|{vT}'
+      if str(vT) != 'None' and str(vT) != '##':
+        if vT not in customerTags:
+          customerTags += f'|{vT}'
     # VTContacts Contact Brand
     contactBrands = record[50] 
     contactBrands = contactBrands.split('|')
     contactBrands = list(filter(lambda x: x != '', contactBrands))
     for cB in contactBrands:
-      if cB not in customerTags:
-        customerTags += f'|{cB}'
+      if str(cB) != 'None' and str(cB) != '##':
+        if cB not in customerTags:
+          customerTags += f'|{cB}'
     # VTContacts Year of Made
     years = record[51] 
     years = years.split('|')
     years = list(filter(lambda x: x != '', years))
     for y in years:
-      if y not in customerTags:
-        customerTags += f'|{y}'
+      if str(y) != 'None' and str(y) != '##':
+        if y not in customerTags:
+          customerTags += f'|{y}'
     # VTContacts Client Type
     vcCType = record[56]
     vcCType = vcCType.split('|')
     vcCType = list(filter(lambda x: x != '', vcCType))
     for vc in vcCType:
-      if vc not in customerTags:
-        customerTags += f'|{vc}'
+      if str(vc) != 'None' and str(vc) != '##':
+        if vc not in customerTags:
+          customerTags += f'|{vc}'
     # VTContacts Model
     model = record[62]
     model = model.split('|')
     model = list(filter(lambda x: x != '', model))
     for m in model:
-      if m not in customerTags:
-        customerTags += f'|{m}'
+      if str(m) != 'None' and str(m) != '##':
+        if m not in customerTags:
+          customerTags += f'|{m}'
     
     newRecord.append(customerTags[1:])
         
@@ -1718,8 +1840,6 @@ def refactorData(data):
           break
       except:
         pass
-    if st == []:
-      status = ''
     newRecord.append(status)
         
     # Softex PaymentType 1 = Credit, 0 = Cash
@@ -1734,8 +1854,6 @@ def refactorData(data):
           break
       except:
         pass
-    if payment == []:
-      paymentType = ''
     newRecord.append(paymentType)
     
     # VTAccount Location Link
@@ -1749,7 +1867,7 @@ def refactorData(data):
     newRecord.append(location[1:])
     
     # VTContacts Vehicle Service Tracker No,None = False, Yes = True
-    service = ''
+    service = False
     vService = record[64]
     vService = vService.split('|')
     vService = list(filter(lambda x: x != '', vService))
@@ -1766,8 +1884,9 @@ def refactorData(data):
     vComments = vComments.split('|')
     vComments = list(filter(lambda x: x != '', vComments))
     for v in vComments:
-      if v not in comment:
-        comment += f'|{v}'
+      if str(v) != 'None':
+        if v not in comment:
+          comment += f'|{v}'
     newRecord.append(comment[1:])
     
     # VTContacts Client Case
@@ -1776,9 +1895,10 @@ def refactorData(data):
     clientCases = clientCases.split('|')
     clientCases = list(filter(lambda x: x != '', clientCases))
     for c in clientCases:
-      if c not in case:
-        case += f'|{c}'
-    newRecord.append(case[1:])
+      if str(c) != 'None' and str(c) != '##':
+        if c not in case:
+          case += f'|{c}'
+    newRecord.append(case[1:])  
     
     # Total Loyalty Points
     total = -1
@@ -1797,6 +1917,7 @@ def refactorData(data):
     refactoredData.append(newRecord)
   print('------Refactoring COMPLETE------')
   print('Exporting to Excel...')
+  refactoredData = cleanDupes(refactoredData)
   refactoredDataDf = pd.DataFrame(
     refactoredData,
     columns=[
@@ -1830,11 +1951,11 @@ def refactorData(data):
       'Total Loyalty Points'
     ]
   )
-  file_name = 'FinalData.xlsx'
+  file_name = 'FinalDataVFINAL.xlsx'
   refactoredDataDf.to_excel(file_name)
   print(f'{file_name} has been created')
   print('------Export COMPLETE------')
-  
+
 def exportExcel(allContacts):
   allContactsDf = pd.DataFrame(
     allContacts,
